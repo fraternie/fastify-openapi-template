@@ -1,0 +1,44 @@
+{
+  "name": "fastify-openapi-template",
+  "version": "1.0.0",
+  "description": "Fraternie's clean template for fastify and openapi-backend",
+  "main": "index.js",
+  "author": "Shivam Verma, Rithik Bhandari",
+  "license": "MIT",
+  "watch": {
+    "schema": "api-docs.json"
+  },
+  "scripts": {
+    "start": "node dist/index.js",
+    "dev": "./node_modules/.bin/npm-run-all --parallel watch-docs dev-server",
+    "dev-win": "npm-run-all --parallel watch-docs dev-server-win",
+    "dev-server-win": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec ts-node src/index.ts | pino-pretty",
+    "dev-server": "'./node_modules/.bin/nodemon' --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec './node_modules/.bin/ts-node' src/index.ts | './node_modules/.bin/pino-pretty'",
+    "watch": "tsc --watch",
+    "watch-docs": "./node_modules/.bin/npm-watch",
+    "build": "tsc",
+    "schema": "npx openapi-typescript api-docs.json --output schema.ts",
+    "lint:fix": "eslint -c .eslintrc.json --fix src/*.ts src/*/*.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^16.3.1",
+    "@typescript-eslint/eslint-plugin": "^4.28.2",
+    "@typescript-eslint/parser": "^4.28.2",
+    "eslint": "^7.30.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "nodemon": "^2.0.12",
+    "npm-run-all": "^4.1.5",
+    "npm-watch": "^0.10.0",
+    "pino-pretty": "^5.1.1",
+    "prettier": "^2.3.2",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "fastify": "^3.19.0",
+    "http-errors": "^1.8.0",
+    "openapi-backend": "^4.1.0"
+  }
+}
