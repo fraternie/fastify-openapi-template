@@ -17,8 +17,8 @@
 
 #### to build -> 
     docker build -t {your-dockerhubId}/{app-name} .
-#### to run -> 
-    docker run {your-dockerhubId}/{app-name}
+#### to run on port 3000 -> 
+    docker run -it -p 3000:3000 {your-dockerhubId}/{app-name}
 #### to run using custom cmd -> 
     docker run -it {your-dockerhubId}/{app-name} {cmd} 
 #### to sh inside a container -> 
