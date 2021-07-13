@@ -1,4 +1,4 @@
-####Built with <3 in Ts
+####Built with <3 in ts, fastify, openapi-backend and openapi-typescript
 
 ## To get rid of initial error, run
     0. yarn install
