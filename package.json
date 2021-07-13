@@ -9,7 +9,7 @@
     "schema": "api-docs.json"
   },
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "./node_modules/.bin/npm-run-all --parallel watch-docs dev-server",
     "dev-win": "npm-run-all --parallel watch-docs dev-server-win",
     "dev-server-win": "nodemon --watch 'src/**/*.ts' --ignore 'src/**/*.spec.ts' --exec ts-node src/index.ts | pino-pretty",
