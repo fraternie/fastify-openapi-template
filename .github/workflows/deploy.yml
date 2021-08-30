@@ -1,0 +1,37 @@
+name: Serverless Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [14.x]
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          branch: master
+
+      - name: Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install packages
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+
+#      - name: Copy env # copy in your env file
+#        run: 'echo -e "${{secrets.ENV}}" > .env'
+
+#      - name: Serverless AWS authentication
+#        run: yarn sls config credentials --provider aws --key ${{ secrets.AWS_ACCESS_KEY }} --secret ${{ secrets.AWS_SECRET_KEY }}
+#
+#      - name: Deploy Lambda functions
+#        run: NODE_ENV=production yarn sls deploy

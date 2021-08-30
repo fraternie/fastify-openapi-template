@@ -33,6 +33,49 @@
           }
         }
       }
+    },
+    "/base": {
+      "get": {
+        "operationId": "base",
+        "description": "Base service dummy response",
+        "responses": {
+          "200": {
+            "description": "Base service dummy response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "notifyUser",
+                    "message",
+                    "code",
+                    "error"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "string"
+                    },
+                    "notifyUser": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "code": {
+                      "type": "number"
+                    },
+                    "error": {
+                      "type": "object",
+                      "nullable": true
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
