@@ -2,11 +2,11 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 import fastify, { FastifyInstance } from 'fastify';
+import AWS from "aws-sdk";
+import admin from "firebase-admin";
 import { apiInit } from './utils/api-init';
 import { OpenAPIBackend } from 'openapi-backend';
 import { BaseResponse } from "./utils/api-types";
-import admin from "firebase-admin";
-import AWS from "aws-sdk";
 
 const app = fastify({
     logger: true,
@@ -14,7 +14,7 @@ const app = fastify({
 
 const registerRoutes = async () => {
     const api = await apiInit(
-        new OpenAPIBackend({ definition: './api-docs.json' }),
+        new OpenAPIBackend({ definition: './api-docs.yaml' }),
     );
     app.route({
         method: [ 'GET', 'DELETE', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'HEAD' ],
@@ -35,11 +35,11 @@ const registerRoutes = async () => {
     });
 };
 
-export const firebaseAdmin = admin.initializeApp(process.env.NODE_ENV !== "test" ? {
+export const firebaseAdmin = admin.initializeApp(process.env.APP_ENV !== "test" ? {
     credential: admin.credential.cert(process.env.SERVICE_ACCOUNT_PATH!)
 } : {});
 
-export const dynamodb = new AWS.DynamoDB.DocumentClient(process.env.NODE_ENV === "test" ?
+export const dynamodb = new AWS.DynamoDB.DocumentClient(process.env.APP_ENV === "test" ?
     { endpoint: 'localhost:8000', sslEnabled: false, region: 'local-env' } : {});
 
 export const s3 = new AWS.S3({

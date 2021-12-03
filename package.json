@@ -6,7 +6,7 @@
   "author": "Shivam Verma, Rithik Bhandari",
   "license": "MIT",
   "watch": {
-    "schema": "api-docs.json"
+    "schema": "api-docs.yaml"
   },
   "scripts": {
     "start": "node dist/src/index.js",
@@ -17,8 +17,8 @@
     "watch": "tsc --watch",
     "watch-docs": "./node_modules/.bin/npm-watch",
     "build": "tsc",
-    "test": "jest",
-    "schema": "npx openapi-typescript api-docs.json --output schema.ts",
+    "test": "APP_ENV=test jest",
+    "schema": "npx openapi-typescript api-docs.yaml --output schema.ts",
     "lint:fix": "eslint -c .eslintrc.js --fix src/*.ts src/*/*.ts"
   },
   "devDependencies": {
@@ -48,6 +48,7 @@
   "dependencies": {
     "aws-lambda-fastify": "^1.7.1",
     "amazon-s3-uri": "^0.1.1",
+    "@hapi/boom": "^9.1.2",
     "aws-sdk": "^2.987.0",
     "axios": "^0.21.4",
     "dotenv": "^10.0.0",

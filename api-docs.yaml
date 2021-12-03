@@ -1,0 +1,88 @@
+openapi: 3.0.2
+info:
+  description: Basic API Template
+  version: 1.0.0
+  title: Base API
+  contact:
+    email: tech@fraternie.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+servers:
+  - url: http://localhost:3000
+security:
+  - firebaseAuth: []
+tags: []
+paths:
+  "/api":
+    get:
+      operationId: api
+      description: Gets the Api docs when in dev mode
+      responses:
+        '200':
+          description: Gets the Api docs when in dev mode
+          content:
+            application/html: {}
+  "/base":
+    get:
+      operationId: base
+      description: Base service dummy response
+      responses:
+        '200':
+          description: Base service dummy response
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - data
+                  - notifyUser
+                  - message
+                  - code
+                  - error
+                properties:
+                  data:
+                    type: string
+                  notifyUser:
+                    type: boolean
+                  message:
+                    type: string
+                  code:
+                    type: number
+                  error:
+                    type: object
+                    nullable: true
+components:
+  securitySchemes:
+    firebaseAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Uses firebase idToken for auth
+  schemas:
+    UserType:
+      type: string
+      enum:
+        - A
+        - B
+    BaseSchema:
+      type: object
+      required:
+        - notifyUser
+        - code
+        - message
+        - error
+      properties:
+        error:
+          type: object
+          nullable: true
+        notifyUser:
+          type: boolean
+          description: Whether to show toast or snackbar to user
+          example: true
+        message:
+          type: string
+          example: Base Response Successfully
+        code:
+          type: number
+          example: 201
