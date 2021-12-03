@@ -87,6 +87,13 @@
       }
     },
     "schemas": {
+      "UserType": {
+        "type": "string",
+        "enum": [
+          "A",
+          "B"
+        ]
+      },
       "BaseSchema": {
         "type": "object",
         "required": [

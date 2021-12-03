@@ -1,7 +1,7 @@
-import { components, operations } from '../../schema';
+import { operations } from '../../schema';
 import { FastifyRequest } from 'fastify';
-
-export type BaseResponse = components['schemas']['BaseSchema'];
+import admin from 'firebase-admin';
+import { BaseResponse, IType } from "./api-types";
 
 export type Operation = keyof operations;
 
@@ -29,17 +29,22 @@ export type FullOperation<O extends Operation> = operations[O] & {
     };
 };
 
+export type AuthUser =
+    admin.auth.DecodedIdToken
+    & { type?: IType, idToken?: string, username?: string, name?: string, imageUrl?: string };
+
+export type Authentication = { firebaseAuth: AuthUser };
+
 export type Code = '200' | '201';
 
-export type HandlerResponse<O extends Operation,
-    T extends Code = '200',
-    > = Promise<FullOperation<O>['responses'][T]['content']['application/json']>;
+export type HandlerResponse<O extends Operation, T extends Code = '200', > =
+    Promise<FullOperation<O>['responses'][T]['content']['application/json']>;
 
 export type HandlerRequest<O extends Operation> = FastifyRequest<{
     Querystring: FullOperation<O>['parameters']['query'];
     Params: FullOperation<O>['parameters']['path'];
     Body: FullOperation<O>['requestBody']['content']['application/json'];
-}>;
+}> & { authentication: Authentication };
 
 export const openApiHandlers = {
     validationFail: (ctx, _, reply) =>

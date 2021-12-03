@@ -4,7 +4,9 @@ dotenv.config();
 import fastify, { FastifyInstance } from 'fastify';
 import { apiInit } from './utils/api-init';
 import { OpenAPIBackend } from 'openapi-backend';
-import { BaseResponse } from './utils/openapi-utils';
+import { BaseResponse } from "./utils/api-types";
+import admin from "firebase-admin";
+import AWS from "aws-sdk";
 
 const app = fastify({
     logger: true,
@@ -15,7 +17,7 @@ const registerRoutes = async () => {
         new OpenAPIBackend({ definition: './api-docs.json' }),
     );
     app.route({
-        method: ['GET', 'DELETE', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'HEAD'],
+        method: [ 'GET', 'DELETE', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'HEAD' ],
         url: '*',
         handler: async (req, reply) => {
             await api.handleRequest(
@@ -33,6 +35,17 @@ const registerRoutes = async () => {
     });
 };
 
+export const firebaseAdmin = admin.initializeApp(process.env.NODE_ENV !== "test" ? {
+    credential: admin.credential.cert(process.env.SERVICE_ACCOUNT_PATH!)
+} : {});
+
+export const dynamodb = new AWS.DynamoDB.DocumentClient(process.env.NODE_ENV === "test" ?
+    { endpoint: 'localhost:8000', sslEnabled: false, region: 'local-env' } : {});
+
+export const s3 = new AWS.S3({
+    signatureVersion: 'v4'
+});
+
 export const initServer = async () => {
     try {
         app.setErrorHandler((error, request, reply) => {
@@ -43,7 +56,7 @@ export const initServer = async () => {
                 stack: error?.stack || '',
                 code: error?.statusCode || 500,
             };
-            reply.send(<BaseResponse>{
+            reply.send(<BaseResponse> {
                 message: resError.message,
                 code: resError.code,
                 notifyUser: true,
@@ -52,12 +65,12 @@ export const initServer = async () => {
         });
         await registerRoutes();
         return app;
-    } catch (err) {
+    } catch ( err ) {
         app.log.error(err);
     }
 };
 
-if (require.main === module) {
+if ( require.main === module ) {
     const port = process.env.PORT || process.env.APP_PORT;
     initServer().then((app: FastifyInstance) => app.listen(port, '0.0.0.0'));
 }
