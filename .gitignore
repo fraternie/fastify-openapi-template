@@ -2,7 +2,7 @@
 /dist
 /node_modules
 .idea
-service-account.json
+/service-account.json
 yarn.lock
 .env
 # Logs

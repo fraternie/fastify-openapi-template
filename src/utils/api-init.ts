@@ -1,5 +1,5 @@
 import { AuthUser, HandlerRequest, HandlerResponse, openApiHandlers, Operation, } from './openapi-utils';
-import { OpenAPIBackend } from 'openapi-backend';
+import { OpenAPIBackend, Request } from 'openapi-backend';
 import { Boom } from "@hapi/boom";
 import { BaseService } from "../services/base.service";
 import { authenticate } from "./auth-controller";

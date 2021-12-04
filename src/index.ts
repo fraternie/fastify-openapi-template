@@ -24,7 +24,7 @@ const registerRoutes = async () => {
                 {
                     body: req.body,
                     query: req.query as string | { [p: string]: string | string[] },
-                    headers: req.headers,
+                    headers: req.headers as { [key: string]: string | string[]; },
                     method: req.method,
                     path: req.url,
                 },
@@ -72,5 +72,5 @@ export const initServer = async () => {
 
 if ( require.main === module ) {
     const port = process.env.PORT || process.env.APP_PORT;
-    initServer().then((app: FastifyInstance) => app.listen(port, '0.0.0.0'));
+    initServer().then((app: FastifyInstance) => app.listen(Number(port), '0.0.0.0'));
 }
