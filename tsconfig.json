@@ -1,18 +1,29 @@
 {
   "compilerOptions": {
+    "target": "es2018",
     "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "allowJs": true,
-    "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "outDir": "./dist",
+    "checkJs": false,
+    "outDir": ".build",
+    "strict": false,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "baseUrl": "./",
-    "incremental": true
-  }
+    "declaration": false,
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "lib": [
+      "es2020"
+    ]
+  },
+  "include": [
+    "src/*.ts",
+    "src/*/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/tests"
+  ]
 }

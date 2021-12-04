@@ -1,0 +1,21 @@
+S3Bucket:
+  Type: AWS::S3::Bucket
+  Properties:
+    BucketName: ${self:custom.S3Bucket.name}
+
+S3BucketPolicy:
+  Type: AWS::S3::BucketPolicy
+  Properties:
+    Bucket: !Ref S3Bucket
+    PolicyDocument:
+      Statement:
+        - Sid: PublicReadAndWrite
+          Effect: Allow
+          Principal: '*'
+          Action:
+            - s3:GetObject
+            - s3:PutObjectAcl
+            - s3:PutObject
+          Resource:
+            - arn:aws:s3:::${self:custom.S3Bucket.name}/*
+            - arn:aws:s3:::${self:custom.S3Bucket.name}

@@ -1,0 +1,35 @@
+UsersTable:
+  Type: AWS::DynamoDB::Table
+  Properties:
+    TableName: ${env:USERS_TABLE_NAME}-${env:APP_ENV}
+    BillingMode: PAY_PER_REQUEST
+    AttributeDefinitions:
+      - AttributeName: uid
+        AttributeType: S
+      - AttributeName: status
+        AttributeType: S
+      - AttributeName: normalisedName
+        AttributeType: S
+      - AttributeName: type
+        AttributeType: S
+    KeySchema:
+      - AttributeName: uid
+        KeyType: HASH
+    GlobalSecondaryIndexes:
+      - IndexName: type_index
+        KeySchema:
+          - AttributeName: type
+            KeyType: HASH
+          - AttributeName: followerCount
+            KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+      - IndexName: normalisedName_index
+        KeySchema:
+          - AttributeName: status
+            KeyType: HASH
+          - AttributeName: normalisedName
+            KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+
