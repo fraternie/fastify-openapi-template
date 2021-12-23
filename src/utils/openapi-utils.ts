@@ -62,7 +62,6 @@ export const openApiHandlers = {
     },
 
     validationFail: (ctx, _, reply) => {
-        console.log(ctx)
         return reply.status(400).send(<ErrorResponse> {
             message: 'Input data not correct!',
             statusCode: 400,
