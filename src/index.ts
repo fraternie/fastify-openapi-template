@@ -6,7 +6,8 @@ import AWS from "aws-sdk";
 import admin from "firebase-admin";
 import { apiInit } from './utils/api-init';
 import { OpenAPIBackend } from 'openapi-backend';
-import { BaseResponse } from "./utils/api-types";
+import { ErrorResponse } from "./utils/api-types";
+import { appEnv } from './utils/constants';
 
 const app = fastify({
     logger: true,
@@ -35,11 +36,11 @@ const registerRoutes = async () => {
     });
 };
 
-export const firebaseAdmin = admin.initializeApp(process.env.APP_ENV !== "test" ? {
+export const firebaseAdmin = admin.initializeApp(process.env.APP_ENV !== appEnv.test ? {
     credential: admin.credential.cert(process.env.SERVICE_ACCOUNT_PATH!)
 } : {});
 
-export const dynamodb = new AWS.DynamoDB.DocumentClient(process.env.APP_ENV === "test" ?
+export const dynamodb = new AWS.DynamoDB.DocumentClient(process.env.APP_ENV === appEnv.test ?
     { endpoint: 'localhost:8000', sslEnabled: false, region: 'local-env' } : {});
 
 export const s3 = new AWS.S3({
@@ -56,11 +57,11 @@ export const initServer = async () => {
                 stack: error?.stack || '',
                 code: error?.statusCode || 500,
             };
-            reply.send(<BaseResponse> {
+            reply.send(<ErrorResponse> {
                 message: resError.message,
-                code: resError.code,
-                notifyUser: true,
-                error: error instanceof Array ? resError[0] : resError,
+                statusCode: resError.code,
+                data: resError,
+                error: resError.name,
             });
         });
         await registerRoutes();

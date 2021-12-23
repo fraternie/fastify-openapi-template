@@ -1,7 +1,9 @@
 import { operations } from '../../schema';
 import { FastifyRequest } from 'fastify';
 import admin from 'firebase-admin';
-import { BaseResponse, IType } from "./api-types";
+import { ErrorResponse, IType } from "./api-types";
+import fs from "fs";
+import { appEnv } from './constants';
 
 export type Operation = keyof operations;
 
@@ -47,35 +49,50 @@ export type HandlerRequest<O extends Operation> = FastifyRequest<{
 }> & { authentication: Authentication };
 
 export const openApiHandlers = {
-    validationFail: (ctx, _, reply) =>
-        reply.status(400).send(<BaseResponse> {
+    api: (ctx, req, reply) => {
+        if ( process.env.APP_ENV !== appEnv.dev )
+            reply.status(400).send(<ErrorResponse>{
+                message: 'Must be in DEV mode to view docs',
+                statusCode: 400,
+                error: 'BadRequest'
+            });
+
+        const api = fs.readFileSync('api-docs.yaml', 'utf8');
+        reply.status(200).send(api);
+    },
+
+    validationFail: (ctx, _, reply) => {
+        console.log(ctx)
+        return reply.status(400).send(<ErrorResponse> {
             message: 'Input data not correct!',
-            code: 400,
-            notifyUser: false,
-            error: { message: ctx.validation.errors[0].message, type: 'BadRequest' },
-        }),
+            statusCode: 400,
+            data: ctx.validation.errors,
+            error: 'BadRequest',
+        });
+    },
 
     postResponseHandler: (ctx, req, reply) => {
         if ( !reply.sent ) {
             const valid = ctx.api.validateResponse(ctx.response, ctx.operation);
             if ( valid.errors ) {
                 // response validation failed
-                return reply.status(500).send(<BaseResponse> {
+                return reply.status(500).send(<ErrorResponse> {
                     message: 'Something went wrong on our side!',
-                    code: 500,
-                    notifyUser: false,
-                    error: valid.errors[0],
+                    statusCode: 500,
+                    data: valid.errors,
+                    error: 'Internal Server Error',
                 });
             }
-            return reply.status(ctx.response.code).send(ctx.response);
+            const statusCode = ctx.response?.statusCode ?? 200;
+            delete ctx.response.statusCode;
+            return reply.status(statusCode).send(ctx.response);
         }
     },
 
     notFound: (ctx, req, reply) =>
-        reply.status(404).send(<BaseResponse> {
+        reply.status(404).send(<ErrorResponse> {
             message: 'Failed to execute this request!',
-            code: 404,
-            notifyUser: false,
-            error: { message: 'Route not found', type: 'NotFound' },
+            statusCode: 404,
+            error: 'NotFound',
         }),
 };
