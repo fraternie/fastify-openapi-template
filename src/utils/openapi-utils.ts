@@ -9,23 +9,23 @@ export type Operation = keyof operations;
 
 export type FullOperation<O extends Operation> = operations[O] & {
   parameters: {
-    path: Record<string, unknown>;
-    query: Record<string, unknown>;
+    path: Record<never, never>;
+    query: Record<never, never>;
   };
   requestBody: {
     content: {
-      'application/json': Record<string, unknown>;
+      'application/json': Record<never, never>;
     };
   };
   responses: {
     '200': {
       content: {
-        'application/json': Record<string, unknown> | void;
+        'application/json': Record<never, never> | void;
       };
     };
     '201': {
       content: {
-        'application/json': Record<string, unknown> | void;
+        'application/json': Record<never, never> | void;
       };
     };
     '204': {
