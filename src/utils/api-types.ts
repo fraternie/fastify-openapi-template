@@ -1,4 +1,4 @@
-import { components } from "../../schema";
+import { components } from '../../schema';
 
 export type ErrorResponse = components['schemas']['ErrorSchema'];
 

@@ -26,7 +26,7 @@ paths:
         200:
           description: Gets the Api docs when in dev mode
           content:
-            application/yaml: {}
+            application/yaml: { }
         400:
           $ref: "#/components/responses/ErrorResponse"
         500:
@@ -37,6 +37,7 @@ paths:
       tags:
         - Base
       description: Base service dummy response
+      security: [ ]
       parameters:
         - $ref: "#/components/parameters/CountParam"
       responses:
