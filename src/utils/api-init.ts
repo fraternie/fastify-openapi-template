@@ -1,4 +1,5 @@
 import { Authentication, AuthUser, FullRequest, HandlerResponse, openApiHandlers, Operation } from './openapi-utils';
+import getConnection from './get-connection'
 import { Boom } from '@hapi/boom';
 import { BaseService } from '../services/base.service';
 import { authenticate } from './auth-controller';
@@ -20,6 +21,7 @@ const registerPath =
         throw ctx.security.firebaseAuth.error;
 
       const auth = ctx.security as Authentication;
+      await getConnection()
 
       return await serviceClass[operationName]({ env: fullRequest, auth: auth.firebaseAuth });
     };
@@ -49,7 +51,6 @@ export const apiInit = async (apiInstance: OpenAPIBackend) => {
       if ( !idToken || typeof idToken !== 'string' )
         // noinspection ExceptionCaughtLocallyJS
         throw new Boom('No id token sent', { statusCode: 400 });
-
 
       const authUser = await authenticate(idToken);
 

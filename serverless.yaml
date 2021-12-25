@@ -6,7 +6,7 @@ useDotenv: true
 provider:
   name: aws
   runtime: nodejs14.x
-  stage: v1 # Default stage to be used. Default is "dev"
+  stage: ${env:APP_ENV} # Default stage to be used. Default is "dev"
   region: ap-south-1
   timeout: 20
   lambdaHashingVersion: 20201221
@@ -20,15 +20,6 @@ provider:
             - s3:GetObject
             - s3:GetObjectAcl
             - s3:DeleteObject
-            - dynamodb:PutItem
-            - dynamodb:DeleteItem
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:UpdateItem
-            - dynamodb:Query
-            - dynamodb:BatchGetItem
-            - dynamodb:BatchWriteItem
-            - dynamodb:ConditionCheck
           Resource:
             - "*"
 
@@ -36,7 +27,6 @@ resources:
   Resources:
     S3Bucket: ${file(resources/s3Bucket.yaml):S3Bucket}
     S3BucketPolicy: ${file(resources/s3Bucket.yaml):S3BucketPolicy}
-    UsersTable: ${file(resources/usersTable.yaml):UsersTable}
 
 functions:
   api:
@@ -50,6 +40,7 @@ functions:
           cors: true
 
 plugins:
+  - serverless-mongodb-local
   - serverless-plugin-typescript
   - serverless-offline
   - serverless-s3-remover
@@ -66,3 +57,9 @@ custom:
       - ${env:UPLOAD_BUCKET}
   S3Bucket:
     name: ${env:UPLOAD_BUCKET}
+  mongodb:
+    stages: # If you only want to use MongoDB Local in particular stages, declare them here
+      - DEV
+    seed:
+      auto: true
+      dataPath: ./seed
