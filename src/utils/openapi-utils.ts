@@ -83,11 +83,16 @@ export const openApiHandlers = {
   },
 
   postResponseHandler: (ctx, req, reply) => {
-    if ( !reply.sent ) {
-      const valid = ctx.api.validateResponse(ctx.response, ctx.operation);
-      if ( valid.errors ) {
+    if (!reply.sent) {
+      const response = ctx.response;
+
+      if (response.error)
+        return reply.status(response.statusCode).send(response);
+
+      const valid = ctx.api.validateResponse(response, ctx.operation);
+      if (valid.errors) {
         // response validation failed
-        return reply.status(500).send(<ErrorResponse> {
+        return reply.status(500).send(<ErrorResponse>{
           message: 'Something went wrong on our side!',
           statusCode: 500,
           data: valid.errors,
@@ -95,7 +100,9 @@ export const openApiHandlers = {
         });
       }
       // automatically adds the 2XX status code to reply
-      const statusCode = Object.keys(ctx.operation.responses).find((e) => e.startsWith('2'));
+      const statusCode = Object.keys(ctx.operation.responses).find((e) =>
+        e.startsWith('2'),
+      );
       delete ctx.response.statusCode;
       return reply.status(statusCode).send(ctx.response);
     }

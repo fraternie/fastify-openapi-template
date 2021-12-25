@@ -5,4 +5,4 @@ const BaseSchema: Schema = new Schema({
   type: { type: String, required: true },
 });
 
-export default model<IType>('Base', BaseSchema);
+export const Base = model<IType>('Base', BaseSchema);
