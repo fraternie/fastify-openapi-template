@@ -3,25 +3,60 @@ import { Boom } from '@hapi/boom';
 import { BaseService } from '../services/base.service';
 import { authenticate } from './auth-controller';
 import { OpenAPIBackend } from 'openapi-backend';
+import { ErrorResponse } from './api-types';
 
 // maps the operationId of path to it's handler
 // while adding response and request type checks
 const registerPath =
   <T extends Operation>(operationName: T, serviceClass: any) =>
-    async (ctx: any, req: FullRequest<T>): HandlerResponse<T> => {
+    async (
+      ctx: any,
+      req: FullRequest<T>,
+    ): Promise<HandlerResponse<T> | ErrorResponse> => {
       const fullRequest = {
-        ...(req.query || {}),
+        ...( req.query || {} ),
         ...( req.body || {} ),
         ...( req.params || {} ),
       };
       // if auth failed
-      if ( ctx.security && !ctx.security.authorized && 'firebaseAuth' in ctx.security )
+      if (
+        ctx.security &&
+        !ctx.security.authorized &&
+        'firebaseAuth' in ctx.security
+      )
         // noinspection ExceptionCaughtLocallyJS
         throw ctx.security.firebaseAuth.error;
 
       const auth = ctx.security as Authentication;
+      let result: HandlerResponse<T> | ErrorResponse;
 
-      return await serviceClass[operationName]({ env: fullRequest, auth: auth.firebaseAuth });
+      try {
+        result = await serviceClass[operationName]({
+          env: fullRequest,
+          auth: auth.firebaseAuth,
+        });
+      } catch ( error ) {
+        let errorDescription: string;
+        let data: any;
+        let statusCode: any;
+
+        if ( error instanceof Boom ) {
+          errorDescription = error.message;
+          data = error.data;
+          statusCode = error.output.statusCode;
+        } else {
+          errorDescription = 'Internal Server Error';
+          statusCode = 500;
+        }
+        result = {
+          error: errorDescription,
+          statusCode: statusCode,
+          message: error.message,
+          data,
+        };
+      }
+
+      return result;
     };
 
 const registerService = (serviceName: Record<string, any>) =>
